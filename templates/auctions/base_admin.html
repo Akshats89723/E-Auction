@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<style>
+    :root {
+        --bg-dark: #0b0d14;
+        --sidebar-bg: #161a26;
+        --accent-cyan: #00f2fe;
+        --sidebar-width: 280px;
+    }
+    body { background-color: var(--bg-dark) !important; color: white; margin: 0; }
+    nav.navbar { display: none !important; }
+
+    .dashboard-wrapper { display: flex; min-height: 100vh; }
+    
+    .sidebar-nav {
+        width: var(--sidebar-width);
+        background-color: var(--sidebar-bg);
+        border-right: 1px solid #2d333b;
+        height: 100vh;
+        position: fixed;
+        left: 0; top: 0;
+        padding: 30px 20px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .main-manage-content {
+        margin-left: var(--sidebar-width);
+        width: calc(100% - var(--sidebar-width));
+        padding: 60px;
+    }
+
+    .nav-link {
+        display: flex; align-items: center; padding: 12px 18px;
+        color: #8b949e; text-decoration: none; border-radius: 12px;
+        margin-bottom: 5px; transition: 0.3s;
+    }
+    .nav-link:hover { color: var(--accent-cyan); background: rgba(0, 242, 254, 0.05); }
+    .nav-link.active { background: var(--accent-cyan); color: #000 !important; font-weight: 700; }
+</style>
+
+<div class="dashboard-wrapper">
+    <div class="sidebar-nav">
+        <h5 class="fw-bold mb-4 text-center text-info">ADMIN PANEL</h5>
+        <a href="{% url 'admin_dashboard' %}" class="nav-link"><i class="bi bi-cpu me-2"></i> Dashboard</a>
+        <hr class="text-secondary">
+        <a href="{% url 'admin_manage_table' 'auctions' %}" class="nav-link {% if title == 'Auctions' %}active{% endif %}">Auctions</a>
+        <a href="{% url 'admin_manage_table' 'users' %}" class="nav-link {% if title == 'Users' %}active{% endif %}">Users</a>
+        <a href="{% url 'admin_manage_table' 'bids' %}" class="nav-link {% if title == 'Bids' %}active{% endif %}">Bids</a>
+        
+        <div class="mt-auto">
+            <a href="{% url 'auction_list' %}" class="nav-link text-info"><i class="bi bi-eye me-2"></i> View Site</a>
+        </div>
+    </div>
+
+    <div class="main-manage-content">
+        {% block admin_content %}{% endblock %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-6 text-center">
+        <div class="card shadow-lg border-0 p-5" style="border-radius: 25px;">
+            <div class="mb-4">
+                <i class="bi bi-check-circle-fill text-success" style="font-size: 5rem;"></i>
+            </div>
+            <h1 class="fw-bold text-dark">Payment Received!</h1>
+            <p class="text-muted fs-5">Your funds are now safely held in <strong>Elite Escrow</strong>.</p>
+
+<div class="card p-4 shadow-sm border-0" style="background: #f8f9fa; border-radius: 15px;">
+    <div class="mb-3 d-flex justify-content-between">
+        <span class="text-muted">Transaction ID:</span>
+        <strong class="text-dark">{{ payment.transaction_id }}</strong>
+    </div>
+    <div class="mb-3 d-flex justify-content-between">
+        <span class="text-muted">Item:</span>
+        <strong class="text-dark">{{ auction.title }}</strong>
+    </div>
+    <div class="mb-0 d-flex justify-content-between">
+        <span class="text-muted">Amount Paid:</span>
+        <strong class="text-success">${{ payment.amount }}</strong>
+    </div>
+</div>
+
+<div class="mt-4">
+    <a href="{% url 'auction_list' %}" class="btn btn-primary btn-lg w-100 mb-2">Return to Auctions</a>
+    
+    <a href="{% url 'download_receipt' payment.id %}" class="btn btn-outline-dark">
+    Print Receipt
+</a>
+</div>
+            
+            <div class="bg-light p-4 rounded-4 my-4 text-start">
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Transaction ID:</span> <strong class="font-monospace">{{ payment.transaction_id }}</strong>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Item:</span> <strong>{{ payment.auction.title }}</strong>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <span>Amount Paid:</span> <strong class="text-success">${{ payment.amount }}</strong>
+                </div>
+            </div>
+
+            <div class="d-grid gap-2">
+                <a href="{% url 'auction_list' %}" class="btn btn-primary btn-lg fw-bold">Return to Auctions</a>
+                <button onclick="window.print()" class="btn btn-outline-dark">
+                    <i class="bi bi-printer me-2"></i>Print Receipt
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

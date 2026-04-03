@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-md-7">
+            <div class="card shadow-sm border-0 overflow-hidden mb-4" style="border-radius: 20px;">
+                {% if auction.image %}
+                    <img src="{{ auction.image.url }}" class="img-fluid" alt="{{ auction.title }}"
+                        style="width: 100%; height: 450px; object-fit: cover;">
+                {% else %}
+                    <div class="bg-light d-flex align-items-center justify-content-center" style="height: 450px;">
+                        <i class="bi bi-image text-muted fs-1"></i>
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="card shadow-sm border-0 p-4 mb-4" style="border-radius: 20px;">
+                <h5 class="fw-bold mb-3 text-dark">
+                    <i class="bi bi-graph-up-arrow me-2 text-primary"></i>Live Bidding Momentum
+                </h5>
+                <div style="height: 300px; position: relative;">
+                    <canvas id="bidHistoryChart"></canvas>
+                </div>
+            </div>
+
+            <div class="card shadow-sm border-0 p-4 mb-4" style="border-radius: 20px;">
+                <h4 class="fw-bold mb-3">Item Description</h4>
+                <p class="text-muted fs-5" style="line-height: 1.8;">{{ auction.description }}</p>
+            </div>
+        </div>
+
+        <div class="col-md-5">
+            <div class="card p-4 shadow-lg border-0 sticky-top" style="border-radius: 20px; top: 20px; z-index: 100;">
+                
+                <div class="mb-3">
+                    {% if not is_trusted %}
+                        <div class="alert alert-warning border-0 py-2 small mb-2" style="background-color: #fff3cd;">
+                            <i class="bi bi-shield-exclamation me-2"></i>
+                            <strong>High Activity Detected:</strong> Multiple actions from single IP addresses. Proceed with caution.
+                        </div>
+                    {% else %}
+                        <div class="badge bg-success-subtle text-success border border-success px-3 py-2 w-100 text-start mb-3" style="border-radius: 10px;">
+                            <i class="bi bi-shield-check-fill me-2"></i>Verified Platform Security: No Fraud Detected
+                        </div>
+                    {% endif %}
+                </div>
+
+                <h1 class="fw-bold text-dark mb-1">{{ auction.title }}</h1>
+                <span class="badge bg-info text-dark mb-3 px-3 py-2 d-inline-block" style="width: fit-content;">{{ auction.category.name }}</span>
+
+                <div class="bg-light p-3 rounded-3 mb-4 border border-light-subtle">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="text-muted fw-bold text-uppercase small">Current Highest Bid</span>
+                        <h2 class="text-success fw-bold m-0">${{ auction.current_highest_bid }}</h2>
+                    </div>
+                </div>
+
+                {% if auction.is_active %}
+                    <form action="{% url 'place_bid' auction.id %}" method="POST" class="mb-4">
+                        {% csrf_token %}
+                        <label class="form-label fw-bold text-muted small text-uppercase">Your Bid Amount</label>
+                        <div class="input-group mb-2">
+                            <span class="input-group-text bg-white border-end-0 font-monospace fw-bold text-success">$</span>
+                            <input type="number" name="bid_amount" class="form-control form-control-lg border-start-0"
+                                placeholder="Min. ${{ auction.current_highest_bid|add:1 }}" required min="{{ auction.current_highest_bid|add:1 }}">
+                            <button class="btn btn-primary btn-lg px-4 fw-bold shadow-sm" type="submit">Place Bid</button>
+                        </div>
+                        <small class="text-muted">Must be higher than the current bid.</small>
+                    </form>
+                {% else %}
+                    {% if auction.winner == user %}
+                        <div class="card border-success bg-success-subtle p-4 text-center shadow-sm mb-4" style="border-radius: 15px;">
+                            <h3 class="text-success fw-bold">🏆 Winner!</h3>
+                            <p class="text-dark mb-4 small">Congratulations, you won this item for <strong>${{ auction.current_highest_bid }}</strong>.</p>
+                            <a href="{% url 'checkout' auction.id %}" class="btn btn-success btn-lg w-100 fw-bold py-3 shadow">
+                                <i class="bi bi-credit-card-fill me-2"></i> PAY NOW
+                            </a>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-secondary text-center py-4 border-0 mb-4" style="border-radius: 15px;">
+                            <h5 class="mb-0 fw-bold text-uppercase text-muted"><i class="bi bi-lock-fill me-2"></i>Bidding Closed</h5>
+                            <p class="mb-0 mt-2 small">Winner: {{ auction.winner.username|default:"N/A" }}</p>
+                        </div>
+                    {% endif %}
+                {% endif %}
+
+                <div class="alert alert-warning py-3 border-0 mb-4" style="background-color: #fffdf5; border-radius: 12px;">
+                    <div class="d-flex align-items-center text-warning-emphasis">
+                        <i class="bi bi-calendar-event fs-4 me-3"></i>
+                        <div>
+                            <div class="small fw-bold text-uppercase opacity-75">Bidding Deadline</div>
+                            <div class="fw-bold">{{ auction.end_time|date:"M d, Y" }} at {{ auction.end_time|date:"H:i" }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <h5 class="fw-bold mb-3 text-dark"><i class="bi bi-clock-history me-2"></i>Live Activity</h5>
+                <div style="max-height: 250px; overflow-y: auto;">
+                    <ul class="list-group list-group-flush">
+                        {% for bid in bids %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center px-0 bg-transparent border-bottom">
+                            <div class="d-flex align-items-center">
+                                <div class="bg-primary-subtle text-primary rounded-circle me-3 d-flex align-items-center justify-content-center" style="width: 34px; height: 34px;">
+                                    <i class="bi bi-person-fill"></i>
+                                </div>
+                                <div>
+                                    <div class="fw-bold small">{{ bid.bidder.username }}</div>
+                                    <small class="text-muted" style="font-size: 0.65rem;">{{ bid.timestamp|timesince }} ago</small>
+                                </div>
+                            </div>
+                            <span class="text-success fw-bold font-monospace">${{ bid.amount }}</span>
+                        </li>
+                        {% empty %}
+                        <li class="list-group-item text-muted text-center py-4 bg-transparent border-0">
+                            No bids placed yet. Be the first!
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const labels = {{ chart_labels|safe }};
+    const dataPoints = {{ chart_data|safe }};
+    const ctx = document.getElementById('bidHistoryChart').getContext('2d');
+
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Price ($)',
+                data: dataPoints,
+                borderColor: '#0d6efd',
+                backgroundColor: 'rgba(13, 110, 253, 0.1)',
+                borderWidth: 3,
+                pointRadius: 5,
+                fill: true,
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: { grid: { color: '#f0f0f0' }, ticks: { font: { weight: 'bold' } } },
+                x: { grid: { display: false } }
+            }
+        }
+    });
+</script>
+{% endblock %}

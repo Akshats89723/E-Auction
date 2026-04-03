@@ -1,0 +1,267 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<style>
+    :root {
+        --bg-dark: #0b0d14;
+        --sidebar-bg: #161a26;
+        --card-bg: #1c212e;
+        --accent-cyan: #00f2fe;
+        --accent-blue: #4facfe;
+        --text-bright: #ffffff;
+        --text-dim: #8b949e;
+        --sidebar-width: 280px;
+    }
+
+    body { 
+        background-color: var(--bg-dark) !important; 
+        color: var(--text-bright); 
+        margin: 0; 
+        padding: 0;
+        overflow-x: hidden;
+    }
+
+    nav.navbar { display: none !important; }
+
+    .dashboard-wrapper {
+        display: flex;
+        min-height: 100vh;
+        width: 100%;
+    }
+
+    .sidebar-nav {
+        width: var(--sidebar-width);
+        background-color: var(--sidebar-bg);
+        border-right: 1px solid #2d333b;
+        height: 100vh;
+        position: fixed;
+        left: 0;
+        top: 0;
+        padding: 35px 20px;
+        display: flex;
+        flex-direction: column;
+        z-index: 1000;
+    }
+
+    .profile-box { text-align: center; margin-bottom: 30px; }
+    .profile-img {
+        width: 90px; height: 90px;
+        border-radius: 50%;
+        border: 2px solid var(--accent-cyan);
+        margin-bottom: 12px;
+        box-shadow: 0 0 15px rgba(0, 242, 254, 0.3);
+        object-fit: cover;
+    }
+
+    .nav-container { flex-grow: 1; overflow-y: auto; }
+
+    .nav-label {
+        font-size: 0.7rem; font-weight: 800; color: var(--text-dim);
+        margin: 20px 0 10px 10px; letter-spacing: 1.5px; text-transform: uppercase;
+    }
+
+    .nav-link {
+        display: flex; align-items: center; padding: 12px 18px;
+        color: var(--text-dim); text-decoration: none; border-radius: 12px;
+        margin-bottom: 6px; transition: all 0.3s;
+    }
+
+    .nav-link i { font-size: 1.2rem; margin-right: 12px; }
+    .nav-link:hover { color: var(--accent-cyan); background: rgba(0, 242, 254, 0.05); }
+
+    .nav-link.active {
+        background: linear-gradient(90deg, var(--accent-cyan), var(--accent-blue));
+        color: #000 !important; font-weight: 700;
+    }
+
+    .main-content {
+        margin-left: var(--sidebar-width);
+        padding: 60px 5%;
+        width: calc(100% - var(--sidebar-width));
+        min-height: 100vh;
+        background-color: var(--bg-dark);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .content-container { width: 100%; max-width: 1400px; }
+
+    .glass-card {
+    background: var(--card-bg);
+    border: 1px solid #2d333b;
+    border-radius: 20px;
+    padding: 25px; /* Reduced padding to give more room for text */
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    transition: transform 0.3s ease, border-color 0.3s ease;
+    overflow: hidden; /* This keeps everything inside the box */
+}
+
+.stat-value {
+    font-size: 2.2rem; /* Reduced from 3.2rem to fit the box */
+    font-weight: 800;
+    margin-top: 10px;
+    letter-spacing: -1px;
+    white-space: nowrap; 
+    overflow: hidden;
+    text-overflow: ellipsis; /* Adds ... if the number is somehow still too long */
+}       
+    .logout-section {
+        border-top: 1px solid #2d333b;
+        padding-top: 20px;
+        margin-top: auto;
+    }
+
+    .btn-print {
+        background: linear-gradient(45deg, var(--accent-cyan), var(--accent-blue));
+        border: none; color: #000; font-weight: 800;
+        padding: 15px 35px; border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 242, 254, 0.3);
+    }
+</style>
+
+<div class="dashboard-wrapper">
+    <div class="sidebar-nav">
+        <div class="profile-box">
+            {% if user.profile_photo %}
+                <img src="{{ user.profile_photo.url }}" class="profile-img">
+            {% else %}
+                <div class="profile-img bg-secondary d-flex align-items-center justify-content-center mx-auto">
+                    <i class="bi bi-person-fill text-white fs-1"></i>
+                </div>
+            {% endif %}
+            <h5 class="fw-bold">{{ user.username }}</h5>
+            <span class="badge bg-success-subtle text-success border border-success">● ONLINE</span>
+        </div>
+
+        <div class="nav-container">
+            <div class="nav-label">Core</div>
+            <a href="{% url 'admin_dashboard' %}" class="nav-link active">
+                <i class="bi bi-speedometer2 me-2"></i> Dashboard
+            </a>
+
+            <div class="nav-label">Management</div>
+
+<a href="/admin/auctions/auction/" class="nav-link">
+    <i class="bi bi-hammer me-2"></i> Auctions
+</a>
+
+<a href="/admin/auctions/user/" class="nav-link">
+    <i class="bi bi-people me-2"></i> Users
+</a>
+
+<a href="/admin/auctions/bid/" class="nav-link">
+    <i class="bi bi-hammer me-2"></i> Bids
+</a>
+
+<a href="/admin/auctions/category/" class="nav-link">
+    <i class="bi bi-tags me-2"></i> Categories
+</a>
+        </div>
+
+        <div class="logout-section">
+            <a href="{% url 'auction_list' %}" class="nav-link text-info p-2 mb-2"><i class="bi bi-eye me-2"></i> View Site</a>
+            <form action="{% url 'logout' %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline-danger w-100 rounded-pill fw-bold py-2">LOGOUT</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="content-container">
+            <div class="d-flex justify-content-between align-items-center mb-5">
+                <div>
+                    <h1 class="display-4 fw-bold">System Command Center</h1>
+                    <p class="text-muted fs-4">Real-time Platform Audit & Financial Hub</p>
+                </div>
+                <button onclick="window.print()" class="btn-print">
+                    <i class="bi bi-printer-fill me-2"></i> PRINT REPORT
+                </button>
+            </div>
+
+            <div class="row g-4 mb-5">
+                <div class="col-md-4">
+                    <div class="glass-card">
+                        <h5 class="fw-bold mb-4" style="color: var(--accent-cyan);"><i class="bi bi-activity"></i>Platform Revenue</h5>
+                       <div class="stat-value text-success" style="font-size: 2.2rem; word-break: break-all;">
+                         ₹{{ total_revenue|floatformat:0 }}
+                       </div>  
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="glass-card">
+                         <h5 class="fw-bold mb-4" style="color: var(--accent-cyan);"><i class="bi bi-activity"></i>Active Dispute</h5>
+                        <div class="stat-value text-danger">{{ active_disputes }}</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="glass-card">
+                         <h5 class="fw-bold mb-4" style="color: var(--accent-cyan);"><i class="bi bi-activity"></i>Total Accounts</h5>
+                        <div class="stat-value text-info">{{ total_users }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-lg-8">
+                    <div class="glass-card h-100">
+                        <h5 class="fw-bold mb-4" style="color: var(--accent-cyan);"><i class="bi bi-activity"></i> Bidding Velocity</h5>
+                        <div style="height: 400px;"><canvas id="lineChart"></canvas></div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="glass-card h-100">
+                        <h5 class="fw-bold mb-4" style="color: var(--accent-cyan);"><i class="bi bi-pie-chart"></i> Categories</h5>
+                        <div style="height: 400px;"><canvas id="barChart"></canvas></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const chartOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+            y: { grid: { color: '#2d333b' }, ticks: { color: '#8b949e' } },
+            x: { grid: { display: false }, ticks: { color: '#8b949e' } }
+        }
+    };
+
+    new Chart(document.getElementById('lineChart'), {
+        type: 'line',
+        data: {
+            labels: {{ line_labels|safe }},
+            datasets: [{
+                data: {{ line_values|safe }},
+                borderColor: '#00f2fe',
+                backgroundColor: 'rgba(0, 242, 254, 0.1)',
+                fill: true, tension: 0.4, borderWidth: 4
+            }]
+        },
+        options: chartOptions
+    });
+
+    new Chart(document.getElementById('barChart'), {
+        type: 'bar',
+        data: {
+            labels: {{ bar_labels|safe }},
+            datasets: [{
+                data: {{ bar_values|safe }},
+                backgroundColor: ['#00f2fe', '#4facfe', '#00d2ff', '#70e1ff'],
+                borderRadius: 12
+            }]
+        },
+        options: chartOptions
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<style>
+    :root {
+        --bg-dark: #0f111a;
+        --card-dark: #1a1d2b;
+        --accent-green: #00ffcc;
+        --border-color: #2d3748;
+    }
+
+    body {
+        background-color: var(--bg-dark);
+        color: white;
+    }
+
+    .register-card {
+        background: var(--card-dark);
+        border: 1px solid var(--border-color);
+        border-radius: 20px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Style Crispy Forms for Dark Mode */
+    .form-control, .form-select, .form-check-input {
+        background-color: #0f111a !important;
+        border: 1px solid var(--border-color) !important;
+        color: white !important;
+    }
+
+    .form-control:focus {
+        border-color: var(--accent-green) !important;
+        box-shadow: 0 0 8px rgba(0, 255, 204, 0.3) !important;
+    }
+
+    .btn-signup {
+        background: var(--accent-green);
+        color: #000;
+        font-weight: 700;
+        border: none;
+        border-radius: 12px;
+        transition: 0.3s;
+    }
+
+    .btn-signup:hover {
+        background: #00cca3;
+        transform: translateY(-2px);
+    }
+
+    .text-muted-custom {
+        color: #8b949e !important;
+    }
+
+    label {
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+</style>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8">
+            <div class="register-card p-4 p-md-5">
+                <div class="text-center mb-4">
+                    <h2 class="fw-bold">Create Your Account</h2>
+                    <p class="text-muted-custom">Join the elite bidding community</p>
+                </div>
+
+                <form method="POST" enctype="multipart/form-data" novalidate>
+                    {% csrf_token %}
+                    
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            {{ form|crispy }}
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2 mt-4">
+                        <button type="submit" class="btn btn-signup btn-lg py-3 shadow">
+                            SIGN UP NOW
+                        </button>
+                    </div>
+                </form>
+
+                <div class="text-center mt-4">
+                    <p class="mb-0 text-muted-custom">
+                        Already have an account? 
+                        <a href="{% url 'login' %}" class="text-info fw-bold text-decoration-none">Login here</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
