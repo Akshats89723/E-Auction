@@ -26,5 +26,5 @@ COPY . /app/
 # Expose port 8000
 EXPOSE 8000
 
-# Run static collection, database migrations, and Daphne ASGI server
-CMD ["sh", "-c", "python manage.py collectstatic --noinput && python manage.py migrate && daphne -b 0.0.0.0 -p 8000 core.asgi:application"]
+# Run static collection, database migrations, data seeding, and Daphne ASGI server
+CMD ["sh", "-c", "python manage.py collectstatic --noinput && python manage.py migrate && python manage.py seed_data && daphne -b 0.0.0.0 -p 8000 core.asgi:application"]
