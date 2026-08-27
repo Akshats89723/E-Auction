@@ -280,6 +280,7 @@ LOGGING = {
 SECURE_CONTENT_TYPE_NOSNIFF = True
 X_FRAME_OPTIONS = 'DENY'
 SECURE_CROSS_ORIGIN_OPENER_POLICY = 'same-origin'
+CSRF_TRUSTED_ORIGINS = ['https://*.onrender.com', 'https://*.railway.app', 'http://localhost:8000', 'http://127.0.0.1:8000']
 
 if not DEBUG:
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')

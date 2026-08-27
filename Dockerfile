@@ -26,5 +26,5 @@ COPY . /app/
 # Expose port 8000
 EXPOSE 8000
 
-# Run Daphne ASGI server for WebSocket & HTTP support
-CMD ["daphne", "-b", "0.0.0.0", "-p", "8000", "core.asgi:application"]
+# Run static collection, database migrations, and Daphne ASGI server
+CMD ["sh", "-c", "python manage.py collectstatic --noinput && python manage.py migrate && daphne -b 0.0.0.0 -p 8000 core.asgi:application"]
