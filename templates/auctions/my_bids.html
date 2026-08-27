@@ -1,76 +1,94 @@
 {% extends "base.html" %}
 
+{% block title %}My Bids — Elite Auctions{% endblock %}
+
 {% block content %}
-<div class="container mt-4">
-    <h2 class="fw-bold mb-4">My Bidding Dashboard</h2>
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="font-heading text-white fw-bold mb-1"><i class="bi bi-hammer text-primary me-2"></i>My Bidding Dashboard</h2>
+            <p class="text-muted small mb-0">Track all active and past auctions you have placed bids on</p>
+        </div>
+        <a href="{% url 'auction_list' %}" class="btn btn-lux-primary">
+            <i class="bi bi-grid-fill me-1"></i>Browse Auctions
+        </a>
+    </div>
 
-    <div class="card shadow-sm border-0" style="border-radius: 15px; overflow: hidden;">
-        <table class="table table-hover align-middle mb-0">
-            <thead class="table-dark">
-                <tr>
-                    <th class="ps-4">Item</th>
-                    <th>Your Last Bid</th>
-                    <th>Status</th>
-                    <th>Payment & Razorpay</th>
-                    <th class="text-center">Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for auction in auctions %}
-                <tr>
-                    <td class="ps-4">
-                        <span class="fw-bold text-dark">{{ auction.title }}</span>
-                    </td>
-                    <td>
-                        <span class="text-success fw-bold">${{ auction.current_highest_bid }}</span>
-                    </td>
-                    <td>
-                        {% if auction.is_active %}
-                        <span class="badge bg-primary">Winning</span>
-                        {% else %}
-                        <span class="badge bg-secondary">Closed</span>
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if auction.payment %}
-                        <div class="d-flex flex-column">
-                            <span class="badge bg-success-subtle text-success border border-success mb-1"
-                                style="width: fit-content;">
-                                <i class="bi bi-shield-check-fill me-1"></i> Paid (Razorpay)
-                            </span>
-                            <small class="text-muted font-monospace" style="font-size: 0.7rem;">
-                                ID: {{ auction.payment.transaction_id }}
-                            </small>
-                        </div>
-                        {% elif not auction.is_active and auction.winner == user %}
-                        <a href="{% url 'checkout' auction.id %}" class="btn btn-warning btn-sm fw-bold">
-                            <i class="bi bi-wallet2 me-1"></i> Pay Now
-                        </a>
-                        {% else %}
-                        <span class="text-muted small">No Action Required</span>
-                        {% endif %}
-                    </td>
-                    <td class="text-center">
-                        <div class="btn-group">
-                            <a href="{% url 'auction_detail' auction.id %}"
-                                class="btn btn-sm btn-outline-primary">View</a>
-
-                            {% if auction.payment %}
-                            <a href="{% url 'download_receipt' auction.payment.id %}" class="btn btn-sm btn-dark"
-                                title="Download Receipt">
-                                <i class="bi bi-file-earmark-pdf me-1"></i> Receipt
+    <div class="glass-panel p-4">
+        <div class="table-responsive">
+            <table class="table table-lux mb-0">
+                <thead>
+                    <tr>
+                        <th class="ps-3">Auction Item</th>
+                        <th>Current / Winning Bid</th>
+                        <th>Auction Status</th>
+                        <th>Payment & Verification</th>
+                        <th class="text-end pe-3">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for auction in auctions %}
+                    <tr>
+                        <td class="ps-3">
+                            <a href="{% url 'auction_detail' auction.id %}" class="text-white fw-bold hover-underline">
+                                {{ auction.title }}
                             </a>
+                            <span class="d-block text-muted small">{{ auction.category.name }}</span>
+                        </td>
+                        <td>
+                            <span class="text-emerald font-heading fw-bold fs-5">₹{{ auction.current_highest_bid }}</span>
+                        </td>
+                        <td>
+                            {% if auction.is_active %}
+                                <span class="badge bg-emerald bg-opacity-25 text-emerald px-3 py-2 rounded-pill font-heading fw-bold">Active Live</span>
+                            {% else %}
+                                <span class="badge bg-secondary bg-opacity-25 text-muted px-3 py-2 rounded-pill font-heading fw-bold">Closed</span>
                             {% endif %}
-                        </div>
-                    </td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="5" class="text-center py-5 text-muted">You haven't placed any bids yet.</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                        </td>
+                        <td>
+                            {% if auction.payment %}
+                                <div>
+                                    <span class="badge bg-emerald bg-opacity-25 text-emerald px-3 py-2 rounded-pill mb-1">
+                                        <i class="bi bi-shield-check me-1"></i> Paid (Razorpay)
+                                    </span>
+                                    <span class="d-block text-subtle font-monospace" style="font-size: 0.72rem;">
+                                        ID: {{ auction.payment.transaction_id }}
+                                    </span>
+                                </div>
+                            {% elif not auction.is_active and auction.winner == user %}
+                                <a href="{% url 'checkout' auction.id %}" class="btn btn-lux-emerald btn-sm font-heading fw-bold">
+                                    <i class="bi bi-wallet2 me-1"></i> Pay Now
+                                </a>
+                            {% else %}
+                                <span class="text-muted small">—</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end pe-3">
+                            <div class="btn-group gap-2">
+                                <a href="{% url 'auction_detail' auction.id %}" class="btn btn-sm btn-lux-secondary">
+                                    View Item
+                                </a>
+                                {% if auction.payment %}
+                                    <a href="{% url 'download_receipt' auction.payment.id %}" class="btn btn-sm btn-lux-primary" title="Download Receipt">
+                                        <i class="bi bi-file-earmark-pdf"></i> Receipt
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center py-5">
+                            <i class="bi bi-hammer display-4 text-muted mb-3 d-block"></i>
+                            <p class="text-white fw-bold mb-1">No Active Bids Found</p>
+                            <p class="text-muted small mb-3">You haven't placed any bids yet. Explore the marketplace to start bidding!</p>
+                            <a href="{% url 'auction_list' %}" class="btn btn-lux-primary">Browse Marketplace</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 {% endblock %}

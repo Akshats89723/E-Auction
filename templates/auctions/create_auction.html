@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Create Auction — Elite Auctions{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="glass-panel p-4 p-md-5">
+                <div class="text-center mb-4">
+                    <h3 class="font-heading text-white fw-bold mb-1"><i class="bi bi-hammer text-primary me-2"></i>Create New Auction Listing</h3>
+                    <p class="text-muted small">Fill in your asset details to launch a live luxury auction</p>
+                </div>
+
+                <form method="POST" enctype="multipart/form-data" id="auctionForm">
+                    {% csrf_token %}
+
+                    <!-- Core Details -->
+                    <h6 class="font-heading text-white fw-bold mb-3 d-flex align-items-center gap-2">
+                        <i class="bi bi-info-circle text-secondary"></i> 1. Core Asset Details
+                    </h6>
+                    <div class="row g-3 mb-4">
+                        <div class="col-12">{{ form.title|as_crispy_field }}</div>
+                        <div class="col-12">{{ form.description|as_crispy_field }}</div>
+                        <div class="col-md-6">{{ form.category|as_crispy_field }}</div>
+                        <div class="col-md-6">{{ form.starting_bid|as_crispy_field }}</div>
+                    </div>
+
+                    <hr class="border-secondary opacity-25">
+
+                    <h6 class="font-heading text-white fw-bold mb-3 d-flex align-items-center gap-2">
+                        <i class="bi bi-sliders text-warning"></i> 2. Pricing & Bidding Rules
+                    </h6>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-4">{{ form.reserve_price|as_crispy_field }}</div>
+                        <div class="col-md-4">{{ form.buy_now_price|as_crispy_field }}</div>
+                        <div class="col-md-4">{{ form.min_bid_increment|as_crispy_field }}</div>
+                    </div>
+                    <div class="glass-panel p-3 mb-4 border-info border-opacity-25 small text-muted">
+                        <i class="bi bi-info-circle me-1 text-info"></i>
+                        <strong class="text-white">Reserve Price:</strong> Hidden threshold required for sale.
+                        <strong class="text-white">Buy Now:</strong> Instant purchase option.
+                        <strong class="text-white">Min Increment:</strong> Minimum bid step amount.
+                    </div>
+
+                    <hr class="border-secondary opacity-25">
+
+                    <h6 class="font-heading text-white fw-bold mb-3 d-flex align-items-center gap-2">
+                        <i class="bi bi-images text-emerald"></i> 3. Media & 3D Interactive Model
+                    </h6>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">{{ form.image|as_crispy_field }}</div>
+                        <div class="col-md-6">
+                            {{ form.model_3d|as_crispy_field }}
+                            <span class="small text-muted"><i class="bi bi-box me-1"></i>Supports .glb and .gltf 3D assets</span>
+                        </div>
+                    </div>
+
+                    <!-- Additional Images -->
+                    {{ formset.management_form }}
+                    <div id="extra-images">
+                        {% for img_form in formset %}
+                        <div class="row g-3 mb-3 extra-img-row glass-panel p-3 border-0" style="background: rgba(13, 18, 31, 0.5);">
+                            <div class="col-md-8">{{ img_form.image|as_crispy_field }}</div>
+                            <div class="col-md-4">{{ img_form.caption|as_crispy_field }}</div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <p class="text-muted small mt-1">Upload up to 5 additional gallery photos</p>
+
+                    <hr class="border-secondary opacity-25">
+
+                    <h6 class="font-heading text-white fw-bold mb-3 d-flex align-items-center gap-2">
+                        <i class="bi bi-calendar-event text-rose"></i> 4. Duration & VIP Privacy
+                    </h6>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">{{ form.end_time|as_crispy_field }}</div>
+                        <div class="col-md-6 d-flex align-items-center mt-4">
+                            <div class="form-check form-switch">
+                                {{ form.is_private }}
+                                <label class="form-check-label text-white fw-bold" for="{{ form.is_private.id_for_label }}">
+                                    Private VIP Auction
+                                </label>
+                                <span class="d-block text-muted small">Only accessible to Gold & Platinum VIP Members</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-3 mt-4">
+                        <button type="submit" name="publish" class="btn btn-lux-primary flex-grow-1 py-3 font-heading fw-bold">
+                            <i class="bi bi-rocket-takeoff-fill me-2"></i>Publish Auction Live
+                        </button>
+                        <button type="submit" name="save_draft" class="btn btn-lux-secondary py-3 px-4 font-heading">
+                            <i class="bi bi-save me-2"></i>Save as Draft
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

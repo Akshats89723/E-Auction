@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Drafts — Elite Auctions{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="font-heading text-white fw-bold mb-1"><i class="bi bi-pencil-square text-primary me-2"></i>My Draft Auctions</h2>
+            <p class="text-muted small mb-0">Saved listings that have not yet been published live to the marketplace</p>
+        </div>
+        <a href="{% url 'create_auction' %}" class="btn btn-lux-primary">
+            <i class="bi bi-plus-circle me-2"></i>Create New Listing
+        </a>
+    </div>
+
+    {% if drafts %}
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        {% for auction in drafts %}
+        <div class="col">
+            <div class="auction-card-lux">
+                <div class="auction-img-wrapper">
+                    {% if auction.image %}
+                        <img src="{{ auction.image.url }}" alt="{{ auction.title }}">
+                    {% else %}
+                        <div class="w-100 h-100 d-flex align-items-center justify-content-center bg-dark text-muted">
+                            <i class="bi bi-image fs-1"></i>
+                        </div>
+                    {% endif %}
+                    <span class="badge bg-warning text-dark position-absolute top-0 start-0 m-3 px-3 py-1 rounded-pill fw-bold font-heading">
+                        <i class="bi bi-pencil me-1"></i>DRAFT
+                    </span>
+                </div>
+                <div class="p-4 d-flex flex-column flex-grow-1">
+                    <h5 class="font-heading text-white fw-bold mb-2 text-truncate">{{ auction.title }}</h5>
+                    <p class="text-muted small mb-3 flex-grow-1">{{ auction.description|truncatewords:10 }}</p>
+                    <div class="glass-panel p-3 mb-3 border-0" style="background: rgba(13, 18, 31, 0.6);">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <span class="text-muted small">Starting Bid:</span>
+                            <span class="text-emerald font-heading fw-bold fs-5">₹{{ auction.starting_bid }}</span>
+                        </div>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <a href="{% url 'publish_draft' auction.id %}" class="btn btn-lux-emerald flex-grow-1 font-heading fw-bold">
+                            <i class="bi bi-rocket-takeoff-fill me-1"></i>Publish Live
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="glass-panel p-5 text-center my-4">
+        <i class="bi bi-pencil-square display-3 text-muted mb-3 d-block"></i>
+        <h3 class="font-heading text-white fw-bold">No Draft Auctions</h3>
+        <p class="text-muted mb-4">When you save an auction as a draft, it will be stored safely here until you are ready to publish.</p>
+        <a href="{% url 'create_auction' %}" class="btn btn-lux-primary py-3 px-5 font-heading">Create Your First Auction</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

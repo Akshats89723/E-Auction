@@ -1,0 +1,225 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Top Bidders Leaderboard — Elite Auctions{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- ── HEADER ── -->
+    <div class="text-center mb-5">
+        <span class="badge bg-warning bg-opacity-25 text-warning px-3 py-2 rounded-pill font-heading fw-bold mb-3 d-inline-flex align-items-center gap-2">
+            <i class="bi bi-trophy-fill"></i> Hall of Fame & Rankings
+        </span>
+        <h1 class="display-5 font-heading text-white fw-bold mb-2">Top Bidders Leaderboard</h1>
+        <p class="text-muted fs-5 mx-auto" style="max-width: 600px;">Spotlighting the most active collectors, high-rollers, and top winning bidders across Elite Auctions</p>
+    </div>
+
+    <!-- ── TOP 3 PODIUM SHOWCASE ── -->
+    {% if top_3 %}
+    <div class="row g-4 justify-content-center align-items-end mb-5">
+        <!-- Rank #2 Silver -->
+        {% if top_3|length >= 2 %}
+        {% with b2=top_3.1 %}
+        <div class="col-lg-4 col-md-6 order-2 order-lg-1">
+            <div class="glass-panel p-4 text-center border-secondary border-opacity-50 relative">
+                <div class="badge bg-secondary text-white position-absolute top-0 start-50 translate-middle px-3 py-1 rounded-pill fw-bold font-heading">
+                    🥈 RANK #2 MASTER
+                </div>
+                {% if b2.user.profile_photo %}
+                    <img src="{{ b2.user.profile_photo.url }}" class="rounded-circle mx-auto d-block mt-3 mb-2 shadow" style="width:90px;height:90px;object-fit:cover;border:3px solid #cbd5e1;">
+                {% else %}
+                    <div class="bg-secondary rounded-circle mx-auto d-flex align-items-center justify-content-center mt-3 mb-2 shadow" style="width:90px;height:90px;">
+                        <i class="bi bi-person-fill text-white fs-2"></i>
+                    </div>
+                {% endif %}
+                <h5 class="font-heading text-white fw-bold mb-1">{{ b2.user.username }}</h5>
+                <span class="text-muted small d-block mb-3">@{{ b2.user.username }}</span>
+                
+                <div class="glass-panel p-3 mb-3 border-0 bg-dark bg-opacity-50">
+                    <div class="row text-center">
+                        <div class="col-6">
+                            <span class="d-block text-muted small">Auctions Won</span>
+                            <span class="font-heading text-warning fw-bold fs-5">{{ b2.auctions_won }}</span>
+                        </div>
+                        <div class="col-6">
+                            <span class="d-block text-muted small">Total Spent</span>
+                            <span class="font-heading text-emerald fw-bold fs-5">₹{{ b2.total_spent }}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex gap-1 flex-wrap justify-content-center">
+                    {% for ach in b2.achievements %}
+                        <span class="badge bg-dark text-white border border-secondary" style="font-size:0.7rem;">{{ ach.icon }} {{ ach.name }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endwith %}
+        {% endif %}
+
+        <!-- Rank #1 Gold Champion -->
+        {% with b1=top_3.0 %}
+        <div class="col-lg-4 col-md-6 order-1 order-lg-2">
+            <div class="glass-panel p-4 text-center border-warning shadow-lg relative" style="transform: scale(1.05); background: linear-gradient(135deg, rgba(245,158,11,0.15) 0%, rgba(22,30,49,0.95) 100%);">
+                <div class="badge bg-warning text-dark position-absolute top-0 start-50 translate-middle px-4 py-2 rounded-pill fw-bold font-heading shadow-lg fs-6">
+                    🏆 RANK #1 CHAMPION
+                </div>
+                {% if b1.user.profile_photo %}
+                    <img src="{{ b1.user.profile_photo.url }}" class="rounded-circle mx-auto d-block mt-4 mb-2 shadow-lg" style="width:110px;height:110px;object-fit:cover;border:4px solid var(--gold);">
+                {% else %}
+                    <div class="bg-warning rounded-circle mx-auto d-flex align-items-center justify-content-center mt-4 mb-2 shadow-lg" style="width:110px;height:110px;">
+                        <i class="bi bi-trophy-fill text-dark fs-1"></i>
+                    </div>
+                {% endif %}
+                <h4 class="font-heading text-white fw-bold mb-1">{{ b1.user.username }}</h4>
+                <span class="text-warning small d-block mb-3 fw-bold"><i class="bi bi-star-fill me-1"></i>Undisputed Top Bidder</span>
+                
+                <div class="glass-panel p-3 mb-3 border-0 bg-dark bg-opacity-50">
+                    <div class="row text-center">
+                        <div class="col-6">
+                            <span class="d-block text-muted small">Auctions Won</span>
+                            <span class="font-heading text-warning fw-bold fs-4">{{ b1.auctions_won }}</span>
+                        </div>
+                        <div class="col-6">
+                            <span class="d-block text-muted small">Total Spent</span>
+                            <span class="font-heading text-emerald fw-bold fs-4">₹{{ b1.total_spent }}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex gap-1 flex-wrap justify-content-center">
+                    {% for ach in b1.achievements %}
+                        <span class="badge bg-warning bg-opacity-25 text-warning border border-warning" style="font-size:0.72rem;">{{ ach.icon }} {{ ach.name }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endwith %}
+
+        <!-- Rank #3 Bronze -->
+        {% if top_3|length >= 3 %}
+        {% with b3=top_3.2 %}
+        <div class="col-lg-4 col-md-6 order-3">
+            <div class="glass-panel p-4 text-center border-secondary border-opacity-50 relative">
+                <div class="badge bg-danger bg-opacity-75 text-white position-absolute top-0 start-50 translate-middle px-3 py-1 rounded-pill fw-bold font-heading">
+                    🥉 RANK #3 COLLECTOR
+                </div>
+                {% if b3.user.profile_photo %}
+                    <img src="{{ b3.user.profile_photo.url }}" class="rounded-circle mx-auto d-block mt-3 mb-2 shadow" style="width:90px;height:90px;object-fit:cover;border:3px solid #b45309;">
+                {% else %}
+                    <div class="bg-danger rounded-circle mx-auto d-flex align-items-center justify-content-center mt-3 mb-2 shadow" style="width:90px;height:90px;">
+                        <i class="bi bi-person-fill text-white fs-2"></i>
+                    </div>
+                {% endif %}
+                <h5 class="font-heading text-white fw-bold mb-1">{{ b3.user.username }}</h5>
+                <span class="text-muted small d-block mb-3">@{{ b3.user.username }}</span>
+                
+                <div class="glass-panel p-3 mb-3 border-0 bg-dark bg-opacity-50">
+                    <div class="row text-center">
+                        <div class="col-6">
+                            <span class="d-block text-muted small">Auctions Won</span>
+                            <span class="font-heading text-warning fw-bold fs-5">{{ b3.auctions_won }}</span>
+                        </div>
+                        <div class="col-6">
+                            <span class="d-block text-muted small">Total Spent</span>
+                            <span class="font-heading text-emerald fw-bold fs-5">₹{{ b3.total_spent }}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex gap-1 flex-wrap justify-content-center">
+                    {% for ach in b3.achievements %}
+                        <span class="badge bg-dark text-white border border-secondary" style="font-size:0.7rem;">{{ ach.icon }} {{ ach.name }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endwith %}
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <!-- ── RANKINGS TABLE ── -->
+    <div class="glass-panel p-4 mb-5">
+        <h5 class="font-heading text-white fw-bold mb-4 d-flex align-items-center gap-2">
+            <i class="bi bi-list-ol text-primary"></i> Full Leaderboard Standings
+        </h5>
+        <div class="table-responsive">
+            <table class="table table-lux mb-0">
+                <thead>
+                    <tr>
+                        <th class="ps-3">Rank</th>
+                        <th>Bidder</th>
+                        <th>VIP Tier</th>
+                        <th>Total Bids</th>
+                        <th>Auctions Won</th>
+                        <th>Win Rate</th>
+                        <th>Total Spent</th>
+                        <th class="text-end pe-3">Badges & Titles</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for b in all_bidders %}
+                    <tr>
+                        <td class="ps-3 fw-bold font-heading">
+                            {% if b.rank == 1 %}
+                                <span class="badge bg-warning text-dark px-3 py-2 rounded-circle fs-6">🥇 #1</span>
+                            {% elif b.rank == 2 %}
+                                <span class="badge bg-secondary text-white px-3 py-2 rounded-circle fs-6">🥈 #2</span>
+                            {% elif b.rank == 3 %}
+                                <span class="badge bg-danger bg-opacity-75 text-white px-3 py-2 rounded-circle fs-6">🥉 #3</span>
+                            {% else %}
+                                <span class="text-muted fs-6">#{{ b.rank }}</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'seller_profile' b.user.id %}" class="text-white fw-bold hover-underline d-flex align-items-center gap-2">
+                                {% if b.user.profile_photo %}
+                                    <img src="{{ b.user.profile_photo.url }}" class="rounded-circle" style="width:32px;height:32px;object-fit:cover;">
+                                {% else %}
+                                    <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center" style="width:32px;height:32px;">
+                                        <i class="bi bi-person-fill text-white small"></i>
+                                    </div>
+                                {% endif %}
+                                {{ b.user.username }}
+                            </a>
+                        </td>
+                        <td>
+                            {% if b.user.vip_tier == 'Platinum' %}
+                                <span class="badge bg-dark text-info border border-info" style="font-size:0.7rem;">💎 Platinum</span>
+                            {% elif b.user.vip_tier == 'Gold' %}
+                                <span class="badge bg-warning text-dark" style="font-size:0.7rem;">🏅 Gold</span>
+                            {% elif b.user.vip_tier == 'Silver' %}
+                                <span class="badge bg-secondary" style="font-size:0.7rem;">🥈 Silver</span>
+                            {% else %}
+                                <span class="text-muted small">—</span>
+                            {% endif %}
+                        </td>
+                        <td class="fw-bold text-white">{{ b.total_bids }}</td>
+                        <td class="fw-bold text-warning">{{ b.auctions_won }}</td>
+                        <td>
+                            <div class="progress bg-dark" style="height: 6px; width: 80px;">
+                                <div class="progress-bar bg-success" role="progressbar" style="width: {{ b.win_rate }}%;"></div>
+                            </div>
+                            <span class="small text-muted d-block mt-1" style="font-size:0.7rem;">{{ b.win_rate }}%</span>
+                        </td>
+                        <td class="fw-bold text-emerald font-heading">₹{{ b.total_spent }}</td>
+                        <td class="text-end pe-3">
+                            <div class="d-flex gap-1 justify-content-end flex-wrap">
+                                {% for ach in b.achievements %}
+                                    <span class="badge bg-dark text-white border border-secondary" style="font-size:0.68rem;" title="{{ ach.name }}">
+                                        {{ ach.icon }} {{ ach.name }}
+                                    </span>
+                                {% endfor %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="8" class="text-center py-5 text-muted">No active bidders found yet. Place bids to claim the #1 spot!</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

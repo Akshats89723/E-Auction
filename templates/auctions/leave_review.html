@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Rate Seller — {{ auction.title }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center py-5">
+    <div class="col-md-7 col-lg-6">
+        <div class="glass-panel p-4 p-md-5">
+            <div class="text-center mb-4">
+                <i class="bi bi-star-fill text-warning display-4 mb-2 d-block"></i>
+                <h3 class="font-heading text-white fw-bold mb-1">Rate Your Experience</h3>
+                <p class="text-muted small">How was your transaction with seller <strong class="text-white">{{ auction.seller.username }}</strong>?</p>
+            </div>
+            
+            <form method="POST">
+                {% csrf_token %}
+                
+                <div class="mb-4 text-center">
+                    <label class="form-label-lux mb-3 d-block">Overall Rating</label>
+                    <div class="glass-panel p-3 d-inline-block border-secondary border-opacity-25">
+                        {% for r in "12345" %}
+                        <div class="form-check form-check-inline mx-2">
+                            <input class="form-check-input" type="radio" name="rating" id="rating{{ r }}" value="{{ r }}" {% if r == "5" %}checked{% endif %}>
+                            <label class="form-check-label text-white fw-bold" for="rating{{ r }}">{{ r }} <i class="bi bi-star-fill text-warning"></i></label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label for="comment" class="form-label-lux">Feedback Comment (Optional)</label>
+                    <textarea class="form-control form-control-lux" id="comment" name="comment" rows="4" placeholder="Describe item quality, packaging, and shipping experience..."></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-lux-primary w-100 py-3 font-heading fw-bold">
+                    Submit Buyer Review <i class="bi bi-check-circle-fill ms-2"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

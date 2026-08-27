@@ -1,53 +1,110 @@
 {% extends "base.html" %}
 
+{% block title %}Secure Checkout — {{ auction.title }}{% endblock %}
+
 {% block content %}
-<div class="row justify-content-center mt-5">
-    <div class="col-md-6">
-        <div class="card shadow-lg border-0 p-4" style="border-radius: 20px;">
-            <h2 class="fw-bold mb-4"><i class="bi bi-shield-check text-primary me-2"></i>Secure Razorpay Payment</h2>
-            <div class="bg-light p-3 rounded-3 mb-4">
-                <p class="mb-1">Item: <strong>{{ auction.title }}</strong></p>
-                <p class="mb-0">Final Amount: <strong class="text-success fs-4">${{ auction.current_highest_bid }}</strong></p>
-            </div>
-            
-            <div class="alert alert-info small">
-                <i class="bi bi-info-circle me-2"></i> Funds will be held in <strong>Razorpay</strong> until the Admin verifies the transaction.
-            </div>
-
-<div class="card p-5 text-center shadow-lg border-0" style="border-radius: 20px;">
-    <h2 class="fw-bold mb-4">Secure Payment</h2>
-    <p class="text-muted">Item: <strong>{{ auction.title }}</strong></p>
-    <h1 class="text-success fw-bold mb-5">₹{{ auction.current_highest_bid }}</h1>
-
-    <button id="rzp-button1" class="btn btn-primary btn-lg w-100 py-3 fw-bold shadow">
-        PAY SECURELY WITH RAZORPAY
-    </button>
-</div>
-
+<!-- Include official Razorpay SDK Script at the top -->
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-<script>
-    var options = {
-        "key": "{{ razorpay_key }}", 
-        "amount": "{{ amount }}", 
-        "currency": "INR",
-        "name": "Elite Auctions",
-        "description": "Payment for {{ auction.title }}",
-        "order_id": "{{ razorpay_order_id }}",
-        "handler": function (response){
-            // Redirect to a success page or verify signature
-            window.location.href = "/payment-success/" + "{{ auction.id }}/?pay_id=" + response.razorpay_payment_id;
-        },
-        "theme": { "color": "#0d6efd" }
-    };
-    var rzp1 = new Razorpay(options);
-    document.getElementById('rzp-button1').onclick = function(e){
-        rzp1.open();
-        e.preventDefault();
-    }
-</script>
 
-            
+<div class="row justify-content-center py-5">
+  <div class="col-md-8 col-lg-6">
+    <div class="glass-panel p-4 p-md-5">
+
+      <!-- Header -->
+      <div class="text-center mb-4">
+        <div class="brand-icon mx-auto mb-3" style="width:60px;height:60px;font-size:1.6rem;background:linear-gradient(135deg,var(--emerald),#047857);">
+          <i class="bi bi-shield-check"></i>
         </div>
+        <h3 class="font-heading text-white fw-bold mb-1">Razorpay Secure Checkout</h3>
+        <p class="text-muted small">Official Razorpay Payment Gateway</p>
+      </div>
+
+      <!-- Item Summary Card -->
+      <div class="glass-panel p-4 mb-4 border-0" style="background: rgba(13, 18, 31, 0.7);">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <span class="text-muted small fw-bold text-uppercase d-block mb-1">Winning Item</span>
+            <h5 class="font-heading text-white fw-bold mb-1">{{ auction.title }}</h5>
+            <span class="text-muted small">Seller: <strong class="text-white">{{ auction.seller.username }}</strong></span>
+          </div>
+          <div class="text-end">
+            <span class="text-muted small fw-bold text-uppercase d-block mb-1">Amount Due</span>
+            <div class="font-heading text-emerald fw-bold fs-3">₹{{ auction.current_highest_bid }}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Escrow Info -->
+      <div class="glass-panel p-3 mb-4 border-info border-opacity-25 d-flex align-items-center gap-3">
+        <i class="bi bi-shield-lock-fill text-info fs-4"></i>
+        <div class="small text-muted">
+          Your payment is secured by <strong class="text-white">Razorpay Escrow</strong>. Funds are safely held until order delivery confirmation.
+        </div>
+      </div>
+
+      <!-- Test Mode Guidance Box -->
+      <div class="glass-panel p-3 mb-4 border-warning border-opacity-25">
+        <div class="d-flex align-items-center gap-2 mb-2 text-warning fw-bold small font-heading">
+          <i class="bi bi-lightbulb-fill"></i> Razorpay Test Mode Guidance:
+        </div>
+        <ul class="text-muted small mb-0 ps-3">
+          <li class="mb-1"><strong>Netbanking (Fastest)</strong>: Click Netbanking inside modal ➔ Pick <strong>SBI / HDFC</strong> ➔ Click <strong>Success</strong>.</li>
+          <li class="mb-1"><strong>Card Test</strong>: Card Number <code>4111 1111 1111 1111</code>, Exp <code>12/30</code>, CVV <code>123</code>.</li>
+          <li><strong>Direct Demo</strong>: Click the green button below to jump straight to Thank You Page & Receipt PDF.</li>
+        </ul>
+      </div>
+
+      <!-- Main Razorpay Payment Gateway Trigger Button -->
+      <button id="rzp-button" class="btn btn-lux-emerald btn-lg w-100 font-heading fw-bold py-3 shadow-lg fs-5 mb-3">
+        <i class="bi bi-lock-fill me-2"></i>Pay ₹{{ auction.current_highest_bid }} via Razorpay Gateway
+      </button>
+
+      <!-- Instant Fallback Redirect Trigger for local presentation -->
+      <a href="{% url 'payment_success' auction.id %}?razorpay_payment_id=pay_demo_success_{{ auction.id }}&razorpay_order_id={{ razorpay_order_id }}" class="btn btn-lux-secondary w-100 py-3 font-heading fw-bold">
+        <i class="bi bi-check-circle-fill me-2 text-success"></i>Direct Demo Confirmation (Thank You Page)
+      </a>
+
+      <p class="text-center text-muted small mt-3 mb-0">
+        <i class="bi bi-shield-check me-1 text-emerald"></i>256-bit SSL encrypted · PCI-DSS Compliant
+      </p>
     </div>
+  </div>
 </div>
+
+<script>
+  var options = {
+    key: "{{ razorpay_key }}",
+    amount: "{{ amount }}",
+    currency: "INR",
+    name: "Elite Auctions",
+    description: "Payment for {{ auction.title }}",
+    {% if is_real_rzp_order %}order_id: "{{ razorpay_order_id }}",{% endif %}
+    handler: function (response) {
+      var payId = (response && response.razorpay_payment_id) ? response.razorpay_payment_id : ('pay_rzp_success_' + Date.now());
+      var ordId = (response && response.razorpay_order_id) ? response.razorpay_order_id : '{{ razorpay_order_id }}';
+      var sig = (response && response.razorpay_signature) ? response.razorpay_signature : 'simulated_sig';
+      window.location.href = "/payment-success/{{ auction.id }}/?razorpay_payment_id=" + payId + "&razorpay_order_id=" + ordId + "&razorpay_signature=" + sig;
+    },
+    modal: {
+      ondismiss: function() {
+        console.log('Razorpay modal closed');
+      }
+    },
+    prefill: { name: "{{ request.user.get_full_name }}", email: "{{ request.user.email }}" },
+    theme: { color: "#6366f1" }
+  };
+
+  document.getElementById('rzp-button').addEventListener('click', function (e) {
+    e.preventDefault();
+    if (typeof Razorpay === 'undefined') {
+        alert("Razorpay script is loading. Please wait a moment and try again.");
+        return;
+    }
+    var rzp = new Razorpay(options);
+    rzp.on('payment.failed', function (response) {
+      alert("Payment Failed or Cancelled: " + (response.error ? response.error.description : "Transaction not completed."));
+    });
+    rzp.open();
+  });
+</script>
 {% endblock %}

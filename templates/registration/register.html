@@ -1,95 +1,51 @@
 {% extends "base.html" %}
 {% load crispy_forms_tags %}
+{% load socialaccount %}
+
+{% block title %}Create Account — Elite Auctions{% endblock %}
 
 {% block content %}
-<style>
-    :root {
-        --bg-dark: #0f111a;
-        --card-dark: #1a1d2b;
-        --accent-green: #00ffcc;
-        --border-color: #2d3748;
-    }
-
-    body {
-        background-color: var(--bg-dark);
-        color: white;
-    }
-
-    .register-card {
-        background: var(--card-dark);
-        border: 1px solid var(--border-color);
-        border-radius: 20px;
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
-    }
-
-    /* Style Crispy Forms for Dark Mode */
-    .form-control, .form-select, .form-check-input {
-        background-color: #0f111a !important;
-        border: 1px solid var(--border-color) !important;
-        color: white !important;
-    }
-
-    .form-control:focus {
-        border-color: var(--accent-green) !important;
-        box-shadow: 0 0 8px rgba(0, 255, 204, 0.3) !important;
-    }
-
-    .btn-signup {
-        background: var(--accent-green);
-        color: #000;
-        font-weight: 700;
-        border: none;
-        border-radius: 12px;
-        transition: 0.3s;
-    }
-
-    .btn-signup:hover {
-        background: #00cca3;
-        transform: translateY(-2px);
-    }
-
-    .text-muted-custom {
-        color: #8b949e !important;
-    }
-
-    label {
-        font-weight: 600;
-        margin-bottom: 5px;
-    }
-</style>
-
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-lg-6 col-md-8">
-            <div class="register-card p-4 p-md-5">
-                <div class="text-center mb-4">
-                    <h2 class="fw-bold">Create Your Account</h2>
-                    <p class="text-muted-custom">Join the elite bidding community</p>
-                </div>
-
-                <form method="POST" enctype="multipart/form-data" novalidate>
-                    {% csrf_token %}
-                    
-                    <div class="row">
-                        <div class="col-md-12 mb-3">
-                            {{ form|crispy }}
-                        </div>
-                    </div>
-
-                    <div class="d-grid gap-2 mt-4">
-                        <button type="submit" class="btn btn-signup btn-lg py-3 shadow">
-                            SIGN UP NOW
-                        </button>
-                    </div>
-                </form>
-
-                <div class="text-center mt-4">
-                    <p class="mb-0 text-muted-custom">
-                        Already have an account? 
-                        <a href="{% url 'login' %}" class="text-info fw-bold text-decoration-none">Login here</a>
-                    </p>
-                </div>
+<div class="auth-wrapper">
+    <div class="auth-card-lux" style="max-width: 580px;">
+        <div class="text-center mb-4">
+            <div class="brand-icon mx-auto mb-3" style="width: 54px; height: 54px; font-size: 1.5rem;">
+                <i class="bi bi-person-plus-fill"></i>
             </div>
+            <h3 class="font-heading text-white fw-bold mb-1">Create Account</h3>
+            <p class="text-muted small">Join India's premier luxury auction platform</p>
+        </div>
+
+        <!-- Social OAuth Connect -->
+        <div class="d-flex flex-column gap-2 mb-4">
+            <a href="{% provider_login_url 'google' %}" class="social-btn">
+                <i class="bi bi-google text-danger fs-5"></i> Sign up with Google
+            </a>
+            <a href="{% provider_login_url 'github' %}" class="social-btn">
+                <i class="bi bi-github text-white fs-5"></i> Sign up with GitHub
+            </a>
+        </div>
+
+        <div class="d-flex align-items-center my-4">
+            <hr class="flex-grow-1 border-secondary opacity-25 m-0">
+            <span class="px-3 text-muted small fw-bold uppercase">or registration details</span>
+            <hr class="flex-grow-1 border-secondary opacity-25 m-0">
+        </div>
+
+        <form method="POST" enctype="multipart/form-data" novalidate>
+            {% csrf_token %}
+            
+            <div class="mb-3">
+                {{ form|crispy }}
+            </div>
+
+            <button type="submit" class="btn btn-lux-primary w-100 py-3 mt-3 font-heading fw-bold">
+                <i class="bi bi-check-circle-fill me-2"></i>CREATE ACCOUNT NOW
+            </button>
+        </form>
+
+        <div class="text-center mt-4 pt-3 border-top border-secondary border-opacity-25">
+            <span class="text-muted small">Already have an account? </span>
+            <a href="{% url 'login' %}" class="fw-bold text-secondary">Sign In</a>
         </div>
     </div>
 </div>
